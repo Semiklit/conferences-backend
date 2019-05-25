@@ -1,7 +1,6 @@
 package responses;
 
 import com.google.gson.annotations.SerializedName;
-import model.Response;
 
 import java.util.UUID;
 

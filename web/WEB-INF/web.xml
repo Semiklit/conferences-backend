@@ -13,4 +13,14 @@
         <servlet-name>Login</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Data</servlet-name>
+        <servlet-class>servlets.GetDataServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Data</servlet-name>
+        <url-pattern>/data</url-pattern>
+    </servlet-mapping>
 </web-app>

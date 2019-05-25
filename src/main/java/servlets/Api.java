@@ -14,6 +14,8 @@ interface Api {
     String ACTION_AUTH = "auth";
 
     String PARAMETER_ID = "id";
+    String PARAMETER_CONFERENCE_ID = "conference.id";
+    String PARAMETER_SECTION_ID = "section.id";
     String PARAMETER_AUTH_METHOD = "auth.method";
     String PARAMETER_AUTH_EMAIL = "auth.email";
     String PARAMETER_AUTH_S_NAME = "auth.s_name";
