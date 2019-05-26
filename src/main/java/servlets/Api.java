@@ -11,6 +11,8 @@ interface Api {
     String ACTION_GET_SECTION_LIST = "get.section.list";
     String ACTION_GET_SECTION_INFO = "get.section.info";
     String ACTION_GET_USER_INFO = "get.user.info";
+    String ACTION_CREATE_CONFERENCE = "create.conference";
+    String ACTION_CREATE_REPORT = "create.report";
     String ACTION_AUTH = "auth";
 
     String PARAMETER_ID = "id";

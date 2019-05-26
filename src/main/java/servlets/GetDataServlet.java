@@ -3,6 +3,7 @@ package servlets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import data.DataBaseManager;
+import data.DateUtil;
 import model.Conference;
 import model.Report;
 import model.Section;
@@ -62,14 +63,19 @@ public class GetDataServlet extends HttpServlet {
 
     private String getConferences(HttpServletRequest req) {
         GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
+        Gson gson = builder
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .create();
         try {
             List<Conference> conferenceList = new ArrayList<>();
             ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM conference_maker.conference.conferences");
             while (resultSet.next()) {
                 conferenceList.add(new Conference(UUID.fromString(resultSet.getString("conference_id")),
                         resultSet.getString("title"),
-                        resultSet.getString("desc")));
+                        resultSet.getString("desc"),
+                        DateUtil.parseDate(resultSet.getString("start")),
+                        DateUtil.parseDate(resultSet.getString("end")),
+                        DateUtil.parseDate(resultSet.getString("registration_end"))));
             }
             return gson.toJson(new ConferencesResponse().setStatus(Response.STATUS_OK).setConferences(conferenceList));
         } catch (SQLException e) {

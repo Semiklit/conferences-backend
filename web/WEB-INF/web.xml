@@ -23,4 +23,14 @@
         <servlet-name>Data</servlet-name>
         <url-pattern>/data</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>Create</servlet-name>
+        <servlet-class>servlets.ConferenceRegestration</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Create</servlet-name>
+        <url-pattern>/create</url-pattern>
+    </servlet-mapping>
 </web-app>
