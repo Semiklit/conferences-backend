@@ -35,8 +35,8 @@ public class GetDataServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType ("text/json; charset=UTF-8");
-        req.setCharacterEncoding ("UTF-8");
+        resp.setContentType("text/json; charset=UTF-8");
+        req.setCharacterEncoding("UTF-8");
         switch (req.getParameter(Api.PARAMETER_ACTION)) {
             case Api.ACTION_GET_CONFERENCE_LIST:
                 resp.getWriter().println(getConferences(req));
@@ -73,9 +73,14 @@ public class GetDataServlet extends HttpServlet {
                 conferenceList.add(new Conference(UUID.fromString(resultSet.getString("conference_id")),
                         resultSet.getString("title"),
                         resultSet.getString("desc"),
+                        resultSet.
                         DateUtil.parseDate(resultSet.getString("start")),
                         DateUtil.parseDate(resultSet.getString("end")),
-                        DateUtil.parseDate(resultSet.getString("registration_end"))));
+                        DateUtil.parseDate(resultSet.getString("registration_end")),
+                        resultSet.getBoolean("is_public"),
+                        UUID.fromString(resultSet.getString("owner_id")),
+                        resultSet.getString("city"),
+                        false));
             }
             return gson.toJson(new ConferencesResponse().setStatus(Response.STATUS_OK).setConferences(conferenceList));
         } catch (SQLException e) {

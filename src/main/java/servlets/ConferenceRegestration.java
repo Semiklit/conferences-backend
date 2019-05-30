@@ -48,12 +48,12 @@ public class ConferenceRegestration extends HttpServlet {
             Conference conference = createConferenceRequest.getConference();
             connection.createStatement().execute(
                     "INSERT INTO conference_maker.conference.conferences VALUES (" +
-                            "'" + conference.getmConferenceId() + "', " +
-                            "'" + conference.getmTitle() + "', " +
-                            "'" + conference.getmDesc() + "', " +
-                            "'" + DateUtil.formatDate(conference.getmStartConference()) + "', " +
-                            "'" + DateUtil.formatDate(conference.getmStartConference()) + "', " +
-                            "'" + DateUtil.formatDate(conference.getmEndRegistration()) + "'" +
+                            "'" + conference.getConferenceId() + "', " +
+                            "'" + conference.getTitle() + "', " +
+                            "'" + conference.getDesc() + "', " +
+                            "'" + DateUtil.formatDate(conference.getStartConference()) + "', " +
+                            "'" + DateUtil.formatDate(conference.getStartConference()) + "', " +
+                            "'" + DateUtil.formatDate(conference.getEndRegistration()) + "'" +
                             ")");
             return gson.toJson(new Response().setStatus(Response.STATUS_OK));
         } catch (IOException | SQLException e) {
