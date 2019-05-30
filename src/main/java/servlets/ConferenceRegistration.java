@@ -8,7 +8,6 @@ import model.Conference;
 import requests.CreateConferenceRequest;
 import responses.Response;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,17 +16,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
-public class ConferenceRegestration extends HttpServlet {
+public class ConferenceRegistration extends HttpServlet {
 
     private Connection connection;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         connection = DataBaseManager.getManager().getConnection();
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
         switch (req.getParameter(Api.PARAMETER_ACTION)) {
             case Api.ACTION_CREATE_CONFERENCE:
@@ -42,7 +41,6 @@ public class ConferenceRegestration extends HttpServlet {
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
         try {
-
             String json = req.getReader().lines().collect(Collectors.joining());
             CreateConferenceRequest createConferenceRequest = gson.fromJson(json, CreateConferenceRequest.class);
             Conference conference = createConferenceRequest.getConference();

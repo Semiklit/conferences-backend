@@ -42,4 +42,8 @@ public class Report {
         this.mTitle = mTitle;
         this.mDesc = mDesc;
     }
+
+    public UUID getReportId() {
+        return mReportId;
+    }
 }

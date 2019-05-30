@@ -3,10 +3,11 @@ package model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+import java.util.List;
+import java.util.List;
 import java.util.UUID;
 
 public class Conference {
-
     @SerializedName("conference_id")
     private UUID mConferenceId;
     @SerializedName("conference_title")
@@ -27,6 +28,8 @@ public class Conference {
     private String city;
     @SerializedName("conference_is_favourite")
     private boolean isFavourite;
+    @SerializedName("conference_sections_id")
+    private List<UUID> sectionsIds;
 
 
     //Из базы
@@ -81,5 +84,9 @@ public class Conference {
 
     public boolean isFavourite() {
         return isFavourite;
+    }
+
+    public void setSectionsIds(List<UUID> sectionsIds){
+        this.sectionsIds = sectionsIds;
     }
 }
