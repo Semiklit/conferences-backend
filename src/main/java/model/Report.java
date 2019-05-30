@@ -46,4 +46,8 @@ public class Report {
     public UUID getReportId() {
         return mReportId;
     }
+
+    public UUID getUserId() {
+        return mUserId;
+    }
 }

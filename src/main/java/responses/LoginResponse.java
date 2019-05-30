@@ -1,12 +1,15 @@
 package responses;
 
 import com.google.gson.annotations.SerializedName;
+import model.User;
 
 import java.util.UUID;
 
 public class LoginResponse extends Response {
-    @SerializedName("Token")
+    @SerializedName("token")
     private UUID token;
+    @SerializedName("user")
+    private User user;
 
     @Override
     public LoginResponse setStatus(int status) {
@@ -16,6 +19,11 @@ public class LoginResponse extends Response {
 
     public LoginResponse setToken(UUID token) {
         this.token = token;
+        return this;
+    }
+
+    public LoginResponse setUser(User user) {
+        this.user = user;
         return this;
     }
 }

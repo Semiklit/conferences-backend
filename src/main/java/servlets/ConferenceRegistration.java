@@ -19,9 +19,13 @@ import java.util.stream.Collectors;
 public class ConferenceRegistration extends HttpServlet {
 
     private Connection connection;
+    private Gson gson;
 
     @Override
     public void init() {
+        gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .create();
         connection = DataBaseManager.getManager().getConnection();
     }
 
@@ -32,14 +36,17 @@ public class ConferenceRegistration extends HttpServlet {
             case Api.ACTION_CREATE_CONFERENCE:
                 resp.getWriter().println(regConference(req));
                 break;
+            case Api.ACTION_EDIT_CONFERENCE:
+//                resp.getWriter().println(regConference(req));
+                break;
+            case Api.ACTION_CREATE_REPORT:
+//                resp.getWriter().println(regConference(req));
+                break;
         }
     }
 
     private String regConference(HttpServletRequest req) {
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
+
         try {
             String json = req.getReader().lines().collect(Collectors.joining());
             CreateConferenceRequest createConferenceRequest = gson.fromJson(json, CreateConferenceRequest.class);

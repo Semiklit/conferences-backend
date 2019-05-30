@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.List;
-import java.util.List;
 import java.util.UUID;
 
 public class Conference {
@@ -33,7 +32,7 @@ public class Conference {
 
 
     //Из базы
-    public Conference(UUID mConferenceId, String mTitle, String mDesc, Date mStartConference, Date mEndConference, Date mEndRegistration, boolean isPublic, UUID ownerID, String city, boolean isFavourite) {
+    public Conference(UUID mConferenceId, String mTitle, String mDesc, Date mStartConference, Date mEndConference, Date mEndRegistration, boolean isPublic, UUID ownerID, String city) {
         this.mConferenceId = mConferenceId;
         this.mTitle = mTitle;
         this.mDesc = mDesc;
@@ -43,7 +42,6 @@ public class Conference {
         this.isPublic = isPublic;
         this.ownerID = ownerID;
         this.city = city;
-        this.isFavourite = isFavourite;
     }
 
     public UUID getConferenceId() {
@@ -84,6 +82,10 @@ public class Conference {
 
     public boolean isFavourite() {
         return isFavourite;
+    }
+
+    public void setIsFavourite(boolean isFavourite) {
+        this.isFavourite = isFavourite;
     }
 
     public void setSectionsIds(List<UUID> sectionsIds){
