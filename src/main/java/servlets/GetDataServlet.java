@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import data.DataBaseManager;
 import model.*;
-import responses.DataResponse;
-import responses.MessagesResponse;
-import responses.NotificationsResponse;
-import responses.Response;
+import responses.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,7 +41,7 @@ public class GetDataServlet extends HttpServlet {
             case Api.ACTION_GET_CONFERENCE_OWEND:
                 resp.getWriter().println(getOwenByUserConferences(req));
                 break;
-            case Api.ACTION_GET_CONFERENCE_FAVOURITS:
+            case Api.ACTION_GET_CONFERENCE_FAVORITES:
                 resp.getWriter().println(getUserFavouriteConferences(req));
                 break;
             case Api.ACTION_GET_REPORTS_FOR_SUBMIT:
@@ -56,12 +53,20 @@ public class GetDataServlet extends HttpServlet {
             case Api.ACTION_GET_NOTIFICATIONS:
                 resp.getWriter().println(getUserNotifications(req));
                 break;
+            case Api.ACTION_GET_USER:
+
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
+    }
+
+    private String getUser(HttpServletRequest req) {
+        UUID userId = UUID.fromString(req.getParameter(Api.PARAMETER_USER_ID));
+        User user = DataBaseManager.getManager().getUser(userId);
+        return gson.toJson(new UserResponse().setStatus(Response.STATUS_OK).setUser(user));
     }
 
     private String getConferenceMessages(HttpServletRequest req) {

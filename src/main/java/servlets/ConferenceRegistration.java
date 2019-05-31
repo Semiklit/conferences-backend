@@ -46,7 +46,6 @@ public class ConferenceRegistration extends HttpServlet {
     }
 
     private String regConference(HttpServletRequest req) {
-
         try {
             String json = req.getReader().lines().collect(Collectors.joining());
             CreateConferenceRequest createConferenceRequest = gson.fromJson(json, CreateConferenceRequest.class);

@@ -7,8 +7,9 @@ interface Api {
     String ACTION_GET_CONFERENCE_LIST = "get.conference.list";
     String ACTION_GET_CONFERENCE = "get.conference";
     String ACTION_GET_CONFERENCE_OWEND = "get.conference.list.owned";
-    String ACTION_GET_CONFERENCE_FAVOURITS = "get.conference.list.fav";
+    String ACTION_GET_CONFERENCE_FAVORITES = "get.conference.list.fav";
     String ACTION_GET_REPORTS_FOR_SUBMIT = "get.reports.not_submitted";
+    String ACTION_GET_USER = "get.user";
     String ACTION_GET_MESSAGES = "get.messages";
     String ACTION_GET_NOTIFICATIONS = "get.notifications";
     String ACTION_CREATE_CONFERENCE = "create.conference";
