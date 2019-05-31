@@ -6,6 +6,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vk.api.sdk.client.Lang;
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.ServiceActor;
@@ -13,6 +14,7 @@ import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.secure.TokenChecked;
+import com.vk.api.sdk.objects.users.UserXtrCounters;
 import data.DataBaseManager;
 import model.User;
 import responses.LoginResponse;
@@ -28,6 +30,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class LoginServlet extends HttpServlet {
@@ -55,6 +58,8 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/json; charset=UTF-8");
+        req.setCharacterEncoding("UTF-8");
         if (Api.ACTION_AUTH.equals(req.getParameter(Api.PARAMETER_ACTION))) {
             resp.getWriter().println(login(req));
         } else {
@@ -64,37 +69,38 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        resp.setContentType("text/json; charset=UTF-8");
+        req.setCharacterEncoding("UTF-8");
     }
 
     private String login(HttpServletRequest req) {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
-        boolean singInResult = false;
+        User user = null;
         switch (req.getParameter(Api.PARAMETER_AUTH_METHOD)) {
             case SERVICE_VK:
-                singInResult = singAsVkUser(req.getParameter(Api.PARAMETER_EXT_SERVICE_TOKEN), req.getParameter(Api.PARAMETER_EXT_SERVICE_ID));
+                user = singAsVkUser(req.getParameter(Api.PARAMETER_EXT_SERVICE_TOKEN), req.getParameter(Api.PARAMETER_EXT_SERVICE_ID));
                 break;
             case SERVICE_GOOGLE:
                 break;
         }
-        if (singInResult) {
+        if (user != null) {
             //Ищем пользователя, если ок, генерим токен, иначе добавляем
             try {
-                ResultSet resultSet = connection.createStatement().executeQuery("SELECT uuid FROM conference_maker.conference.users where vk_id = '" + req.getParameter(Api.PARAMETER_EXT_SERVICE_ID) + "'");
+                ResultSet resultSet = connection.createStatement().executeQuery("SELECT uuid FROM conference_maker.conference.users where vk_id = '" + user.getVkId() + "'");
                 if (resultSet.next()) {
                     UUID userUUID = UUID.fromString(resultSet.getString(1));
                     UUID userToken = UUID.randomUUID();
                     createUserToken(userUUID, userToken);
-                    User user = DataBaseManager.getManager().getUser(userUUID);
-                    return gson.toJson(new LoginResponse().setStatus(Response.STATUS_OK).setToken(UUID.randomUUID()).setUser(user));
+                    User userFromBase = DataBaseManager.getManager().getUser(userUUID);
+                    return gson.toJson(new LoginResponse().setStatus(Response.STATUS_OK).setToken(userToken).setUser(userFromBase));
                 } else {
                     if (req.getParameter(Api.PARAMETER_AUTH_METHOD).equals(SERVICE_VK)) {
                         UUID userUUID = UUID.randomUUID();
                         UUID userToken = UUID.randomUUID();
-                        connection.createStatement().execute("INSERT INTO conference_maker.conference.users VALUES ('" + userUUID + "', '" + req.getParameter(Api.PARAMETER_EXT_SERVICE_ID) + "', null, 'test', 'test', '123')");
+                        connection.createStatement().execute("INSERT INTO conference_maker.conference.users VALUES ('" + userUUID + "', '" + user.getVkId() + "', null, '" + user.getmName() + "', 'test', '123')");
                         createUserToken(userUUID, userToken);
-                        return gson.toJson(new LoginResponse().setStatus(Response.STATUS_OK).setToken(UUID.randomUUID()));
+                        return gson.toJson(new LoginResponse().setStatus(Response.STATUS_OK).setToken(userToken).setUser(new User(userUUID, user.getmName())));
                     }
                     return gson.toJson(new LoginResponse().setStatus(Response.STATUS_USER_NOT_FOUND));
                 }
@@ -125,16 +131,10 @@ public class LoginServlet extends HttpServlet {
 
             // Print user identifier
             String user = payload.getSubject();
-            System.out.println("User ID: " + userId);
 
             // Get profile information from payload
-            String email = payload.getEmail();
-            boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-            String name = (String) payload.get("name");
-            String pictureUrl = (String) payload.get("picture");
             String locale = (String) payload.get("locale");
             String familyName = (String) payload.get("family_name");
-            String givenName = (String) payload.get("given_name");
 
             // Use or store profile information
             // ...
@@ -151,14 +151,21 @@ public class LoginServlet extends HttpServlet {
     }
 
 
-    private boolean singAsVkUser(String token, String userId) {
+    private User singAsVkUser(String token, String userId) {
         try {
             TransportClient transportClient = HttpTransportClient.getInstance();
             VkApiClient vk = new VkApiClient(transportClient);
             TokenChecked tokenChecked = vk.secure().checkToken(new ServiceActor(BACK_VK_APP_ID, BACK_VK_SERVICE_TOKEN)).token(token).execute();
-            return tokenChecked.getSuccess().getValue().equals("1") && tokenChecked.getUserId().toString().equals(userId);
+            List<UserXtrCounters> counters = vk.users().get(new ServiceActor(BACK_VK_APP_ID, BACK_VK_SERVICE_TOKEN)).lang(Lang.RU).userIds(tokenChecked.getUserId().toString()).fields().execute();
+            String name = "";
+            if (counters.size() > 0 && tokenChecked.getSuccess().getValue().equals("1") && tokenChecked.getUserId().toString().equals(userId)) {
+                name += counters.get(0).getFirstName() + " " + counters.get(0).getLastName();
+                return new User(name, tokenChecked.getUserId());
+            }
+
+            return null;
         } catch (ClientException | ApiException ignored) {
-            return false;
+            return null;
         }
     }
 }

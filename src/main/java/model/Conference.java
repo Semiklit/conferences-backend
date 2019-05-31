@@ -88,6 +88,7 @@ public class Conference {
         this.isFavourite = isFavourite;
     }
 
+
     public void setSectionsIds(List<UUID> sectionsIds){
         this.sectionsIds = sectionsIds;
     }

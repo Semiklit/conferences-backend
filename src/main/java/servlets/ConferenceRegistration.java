@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import data.DataBaseManager;
 import data.DateUtil;
 import model.Conference;
+import model.Section;
 import requests.CreateConferenceRequest;
 import responses.Response;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ConferenceRegistration extends HttpServlet {
@@ -50,15 +52,28 @@ public class ConferenceRegistration extends HttpServlet {
             String json = req.getReader().lines().collect(Collectors.joining());
             CreateConferenceRequest createConferenceRequest = gson.fromJson(json, CreateConferenceRequest.class);
             Conference conference = createConferenceRequest.getConference();
+            UUID conferenceId = UUID.randomUUID();
             connection.createStatement().execute(
                     "INSERT INTO conference_maker.conference.conferences VALUES (" +
-                            "'" + conference.getConferenceId() + "', " +
+                            "'" + conferenceId + "', " +
                             "'" + conference.getTitle() + "', " +
                             "'" + conference.getDesc() + "', " +
                             "'" + DateUtil.formatDate(conference.getStartConference()) + "', " +
                             "'" + DateUtil.formatDate(conference.getStartConference()) + "', " +
-                            "'" + DateUtil.formatDate(conference.getEndRegistration()) + "'" +
+                            "'" + DateUtil.formatDate(conference.getEndRegistration()) + "'," +
+                            "'" + conference.isPublic() + "'," +
+                            "'" + DataBaseManager.getManager().getCurrentUserId(UUID.fromString(req.getHeader(Api.HEADER_AUTH))) + "'," +
+                            "'" + conference.getCity() + "'" +
                             ")");
+            for (Section section : createConferenceRequest.getSectionList()) {
+                connection.createStatement().execute(
+                        "INSERT into conference_maker.conference.sections VALUES (" +
+                                "'" + UUID.randomUUID() + "'," +
+                                "'" + conferenceId + "'," +
+                                "'" + section.getmTitle() + "'," +
+                                "'" + section.getmDesc() + "')"
+                );
+            }
             return gson.toJson(new Response().setStatus(Response.STATUS_OK));
         } catch (IOException | SQLException e) {
             e.printStackTrace();

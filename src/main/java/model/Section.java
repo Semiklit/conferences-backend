@@ -24,6 +24,14 @@ public class Section {
         this.mDesc = mDesc;
     }
 
+    public String getmTitle() {
+        return mTitle;
+    }
+
+    public String getmDesc() {
+        return mDesc;
+    }
+
     public UUID getSectionId() {
         return mSectionId;
     }

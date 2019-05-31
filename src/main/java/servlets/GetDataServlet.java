@@ -54,7 +54,7 @@ public class GetDataServlet extends HttpServlet {
                 resp.getWriter().println(getUserNotifications(req));
                 break;
             case Api.ACTION_GET_USER:
-
+                resp.getWriter().println(getUser(req));
         }
     }
 
@@ -64,7 +64,7 @@ public class GetDataServlet extends HttpServlet {
     }
 
     private String getUser(HttpServletRequest req) {
-        UUID userId = UUID.fromString(req.getParameter(Api.PARAMETER_USER_ID));
+        UUID userId = DataBaseManager.getManager().getCurrentUserId(UUID.fromString(req.getHeader(Api.HEADER_AUTH)));
         User user = DataBaseManager.getManager().getUser(userId);
         return gson.toJson(new UserResponse().setStatus(Response.STATUS_OK).setUser(user));
     }
